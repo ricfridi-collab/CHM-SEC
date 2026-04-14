@@ -26,24 +26,19 @@
         }
 
         /* واجهة التفعيل */
-        #activation-screen {
+        #activation-overlay {
             position: fixed; inset: 0; background: var(--primary-bg);
-            z-index: 9999; display: flex; justify-content: center; align-items: center;
-            padding: 20px;
+            z-index: 9999; display: flex; justify-content: center; align-items: center; padding: 20px;
         }
         .activation-card {
             background: rgba(27, 77, 62, 0.2); border: 1px solid var(--gold-solid);
             padding: 30px; border-radius: 20px; text-align: center; backdrop-filter: blur(10px);
-            max-width: 400px; width: 100%;
+            max-width: 400px; width: 100%; box-shadow: 0 0 30px rgba(0,0,0,0.5);
         }
         .activation-card input {
-            width: 100%; padding: 12px; margin: 20px 0; border-radius: 10px;
-            border: 1px solid var(--gold-solid); background: rgba(0,0,0,0.3);
-            color: white; text-align: center; font-size: 1.1rem; box-sizing: border-box;
-        }
-        .activation-btn {
-            background: var(--gold-linear); color: black; border: none;
-            padding: 12px 30px; border-radius: 10px; font-weight: 800; cursor: pointer; width: 100%;
+            width: 100%; padding: 15px; margin: 20px 0; border-radius: 12px;
+            border: 1px solid var(--gold-solid); background: rgba(0,0,0,0.4);
+            color: white; text-align: center; font-size: 1.2rem; box-sizing: border-box; outline: none;
         }
 
         .ticker { background: var(--vert-bouteille); color: var(--gold-solid); padding: 8px 0; font-size: 0.7rem; border-bottom: 1px solid var(--gold-solid); text-align: center; overflow: hidden; }
@@ -105,13 +100,13 @@
 </head>
 <body>
 
-    <div id="activation-screen">
+    <div id="activation-overlay">
         <div class="activation-card">
-            <h2 style="color:var(--gold-solid); font-family:'Playfair Display';">BEM ELITE 2026</h2>
-            <p style="font-size:0.8rem; opacity:0.8;">Enter your activation code to unlock the full revision content.</p>
-            <input type="text" id="activation-code" placeholder="BEM26-XXXX">
-            <button class="activation-btn" onclick="validateActivation()">ACTIVATE APP</button>
-            <p id="activation-error" style="color:var(--wrong); font-size:0.8rem; margin-top:10px; display:none;">Invalid Code. Please try again.</p>
+            <h2 style="font-family:'Playfair Display'; color:var(--gold-solid);">BEM ELITE 2026</h2>
+            <p style="font-size:0.8rem; opacity:0.7;">Enter activation code to unlock</p>
+            <input type="text" id="activation-input" placeholder="BEM26-XXXX">
+            <button class="option-btn" style="background:var(--gold-linear); color:black; font-weight:bold; text-align:center;" onclick="handleActivation()">ACTIVATE APP</button>
+            <p id="error-msg" style="color:var(--wrong); font-size:0.75rem; margin-top:10px; display:none;">Invalid code or locked to another device.</p>
         </div>
     </div>
 
@@ -125,7 +120,9 @@
             <div class="nav-item" onclick="startQuiz('Unit1')"><svg viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg></div>
             <div class="nav-item" onclick="startQuiz('Unit2')"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/></svg></div>
             <div class="nav-item" onclick="startQuiz('Unit3')"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z"/></svg></div>
-            <div class="nav-item" style="margin-top:auto; padding-bottom:20px;" onclick="logout()"><svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg></div>
+            <div class="nav-item" style="margin-top:auto; padding-bottom:20px;" onclick="logoutApp()">
+                <svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
+            </div>
         </nav>
 
         <main class="main-content" id="home-view">
@@ -160,265 +157,105 @@
     <footer class="footer-bar"><div class="signature">DR. MOHAMED CHOUIDIRA</div></footer>
 
     <script>
-        // --- الأمن وأكواد التفعيل ---
-        const masterCodes = [
-            "BEM26-X7R2", "BEM26-A9P4", "BEM26-M5K8", "BEM26-Q1W9", "BEM26-T3V6", "BEM26-N8B2", "BEM26-L4H7", "BEM26-D2J5", "BEM26-S6F3", "BEM26-G9C1",
-            "BEM26-Z1Y8", "BEM26-K4M2", "BEM26-R7X5", "BEM26-V3N9", "BEM26-P6L4", "BEM26-H2D8", "BEM26-W9Q1", "BEM26-F5S7", "BEM26-C3G9", "BEM26-J8K2",
-            "BEM26-Y4B6", "BEM26-M1T9", "BEM26-R8X3", "BEM26-L5N7", "BEM26-P2V4", "BEM26-Q9W1", "BEM26-S7F5", "BEM26-K3M8", "BEM26-D6J2", "BEM26-G1C4",
-            "BEM26-H8B9", "BEM26-Z4Y2", "BEM26-T7V5", "BEM26-N1M3", "BEM26-X6R8", "BEM26-A2P9", "BEM26-F4S1", "BEM26-W3Q7", "BEM26-L8H2", "BEM26-D9J5",
-            "BEM26-M2K6", "BEM26-R5X1", "BEM26-C7G4", "BEM26-V8N2", "BEM26-S1F9", "BEM26-B3K7", "BEM26-T9V4", "BEM26-Z2Y6", "BEM26-P5L1", "BEM26-Q8W3",
-            "BEM26-X1R5", "BEM26-A4P7", "BEM26-M9K2", "BEM26-J3D6", "BEM26-H6C8", "BEM26-F1S4", "BEM26-G2K9", "BEM26-L7H3", "BEM26-N5M8", "BEM26-W4Q2",
-            "BEM26-R1X9", "BEM26-D4J7", "BEM26-S8F2", "BEM26-C5G1", "BEM26-K9M4", "BEM26-B2L6", "BEM26-T5V8", "BEM26-Z9Y3", "BEM26-P1L7", "BEM26-V4N5",
-            "BEM26-X8R3", "BEM26-A1P6", "BEM26-M4K9", "BEM26-Q7W2", "BEM26-S3F8", "BEM26-H9C5", "BEM26-F2S1", "BEM26-W6Q4", "BEM26-L3H9", "BEM26-D1J2",
-            "BEM26-R4X8", "BEM26-C9G2", "BEM26-V1N7", "BEM26-N7M4", "BEM26-K2M5", "BEM26-B8L9", "BEM26-T1V3", "BEM26-Z6Y7", "BEM26-P9L2", "BEM26-X4R1",
-            "BEM26-A7P5", "BEM26-M2K1", "BEM26-Q3W6", "BEM26-S9F4", "BEM26-H1C2", "BEM26-F8S3", "BEM26-G5K7", "BEM26-L2H1", "BEM26-N9M6", "BEM26-W7Q8",
-            "BEM26-R3X2", "BEM26-D8J9", "BEM26-C1G5", "BEM26-V6N3", "BEM26-K7M1", "BEM26-B4L8", "BEM26-T2V9", "BEM26-Z5Y1", "BEM26-P8L4", "BEM26-X9R6",
-            "BEM26-A3P2", "BEM26-M6K4", "BEM26-Q5W7", "BEM26-S2F1", "BEM26-H4C9", "BEM26-F9S5", "BEM26-G3K2", "BEM26-L1H8", "BEM26-N4M7", "BEM26-W2Q9",
-            "BEM26-R9X4", "BEM26-D3J6", "BEM26-C8G7", "BEM26-V5N1", "BEM26-K1M9", "BEM26-B7L2", "BEM26-T8V4", "BEM26-Z3Y5", "BEM26-P4L9", "BEM26-X2R7",
-            "BEM26-A5P1", "BEM26-M8K3", "BEM26-Q2W4", "BEM26-S4F6", "BEM26-H7C1", "BEM26-F3S9", "BEM26-G8K5", "BEM26-L6H2", "BEM26-N2M9", "BEM26-W5Q3",
-            "BEM26-R6X7", "BEM26-D1J4", "BEM26-C4G8", "BEM26-V9N6", "BEM26-K5M2", "BEM26-B1L3", "BEM26-T4V7", "BEM26-Z8Y9", "BEM26-P3L5", "BEM26-X5R2",
-            "BEM26-A9P8", "BEM26-M1K7", "BEM26-Q6W2", "BEM26-S8F3", "BEM26-H3C5", "BEM26-F7S1", "BEM26-G1K4", "BEM26-L9H6", "BEM26-N3M2", "BEM26-W8Q5",
-            "BEM26-R2X1", "BEM26-D7J3", "BEM26-C9G6", "BEM26-V4N8", "BEM26-K8M5", "BEM26-B5L1", "BEM26-T9V2", "BEM26-Z1Y4", "BEM26-P7L8", "BEM26-X3R9",
-            "BEM26-A8P4", "BEM26-M5K2", "BEM26-Q1W7", "BEM26-S5F9", "BEM26-H2C3", "BEM26-F6S8", "BEM26-G4K1", "BEM26-L2H5", "BEM26-N6M1", "BEM26-W1Q4",
-            "BEM26-R7X3", "BEM26-D5J9", "BEM26-C2G1", "BEM26-V3N4", "BEM26-K9M7", "BEM26-B6L2", "BEM26-T3V5", "BEM26-Z7Y8", "BEM26-P1L3", "BEM26-X6R4",
-            "BEM26-A2P1", "BEM26-M7K5", "BEM26-Q4W8", "BEM26-S1F2", "BEM26-H5C7", "BEM26-F4S3", "BEM26-G9K6", "BEM26-L4H2", "BEM26-N8M5", "BEM26-W3Q1"
-        ];
+        // --- نظام الحماية والأكواد ---
+        const masterCodes = ["BEM26-X7R2", "BEM26-A9P4", "BEM26-M5K8", "BEM26-Q1W9", "BEM26-T3V6", "BEM26-N8B2", "BEM26-L4H7", "BEM26-D2J5", "BEM26-S6F3", "BEM26-G9C1", "BEM26-Z1Y8", "BEM26-K4M2", "BEM26-R7X5", "BEM26-V3N9", "BEM26-P6L4", "BEM26-H2D8", "BEM26-W9Q1", "BEM26-F5S7", "BEM26-C3G9", "BEM26-J8K2", "BEM26-Y4B6", "BEM26-M1T9", "BEM26-R8X3", "BEM26-L5N7", "BEM26-P2V4", "BEM26-Q9W1", "BEM26-S7F5", "BEM26-K3M8", "BEM26-D6J2", "BEM26-G1C4", "BEM26-H8B9", "BEM26-Z4Y2", "BEM26-T7V5", "BEM26-N1M3", "BEM26-X6R8", "BEM26-A2P9", "BEM26-F4S1", "BEM26-W3Q7", "BEM26-L8H2", "BEM26-D9J5", "BEM26-M2K6", "BEM26-R5X1", "BEM26-C7G4", "BEM26-V8N2", "BEM26-S1F9", "BEM26-B3K7", "BEM26-T9V4", "BEM26-Z2Y6", "BEM26-P5L1", "BEM26-Q8W3", "BEM26-X1R5", "BEM26-A4P7", "BEM26-M9K2", "BEM26-J3D6", "BEM26-H6C8", "BEM26-F1S4", "BEM26-G2K9", "BEM26-L7H3", "BEM26-N5M8", "BEM26-W4Q2", "BEM26-R1X9", "BEM26-D4J7", "BEM26-S8F2", "BEM26-C5G1", "BEM26-K9M4", "BEM26-B2L6", "BEM26-T5V8", "BEM26-Z9Y3", "BEM26-P1L7", "BEM26-V4N5", "BEM26-X8R3", "BEM26-A1P6", "BEM26-M4K9", "BEM26-Q7W2", "BEM26-S3F8", "BEM26-H9C5", "BEM26-F2S1", "BEM26-W6Q4", "BEM26-L3H9", "BEM26-D1J2", "BEM26-R4X8", "BEM26-C9G2", "BEM26-V1N7", "BEM26-N7M4", "BEM26-K2M5", "BEM26-B8L9", "BEM26-T1V3", "BEM26-Z6Y7", "BEM26-P9L2", "BEM26-X4R1", "BEM26-A7P5", "BEM26-M2K1", "BEM26-Q3W6", "BEM26-S9F4", "BEM26-H1C2", "BEM26-F8S3", "BEM26-G5K7", "BEM26-L2H1", "BEM26-N9M6", "BEM26-W7Q8", "BEM26-R3X2", "BEM26-D8J9", "BEM26-C1G5", "BEM26-V6N3", "BEM26-K7M1", "BEM26-B4L8", "BEM26-T2V9", "BEM26-Z5Y1", "BEM26-P8L4", "BEM26-X9R6", "BEM26-A3P2", "BEM26-M6K4", "BEM26-Q5W7", "BEM26-S2F1", "BEM26-H4C9", "BEM26-F9S5", "BEM26-G3K2", "BEM26-L1H8", "BEM26-N4M7", "BEM26-W2Q9", "BEM26-R9X4", "BEM26-D3J6", "BEM26-C8G7", "BEM26-V5N1", "BEM26-K1M9", "BEM26-B7L2", "BEM26-T8V4", "BEM26-Z3Y5", "BEM26-P4L9", "BEM26-X2R7", "BEM26-A5P1", "BEM26-M8K3", "BEM26-Q2W4", "BEM26-S4F6", "BEM26-H7C1", "BEM26-F3S9", "BEM26-G8K5", "BEM26-L6H2", "BEM26-N2M9", "BEM26-W5Q3", "BEM26-R6X7", "BEM26-D1J4", "BEM26-C4G8", "BEM26-V9N6", "BEM26-K5M2", "BEM26-B1L3", "BEM26-T4V7", "BEM26-Z8Y9", "BEM26-P3L5", "BEM26-X5R2", "BEM26-A9P8", "BEM26-M1K7", "BEM26-Q6W2", "BEM26-S8F3", "BEM26-H3C5", "BEM26-F7S1", "BEM26-G1K4", "BEM26-L9H6", "BEM26-N3M2", "BEM26-W8Q5", "BEM26-R2X1", "BEM26-D7J3", "BEM26-C9G6", "BEM26-V4N8", "BEM26-K8M5", "BEM26-B5L1", "BEM26-T9V2", "BEM26-Z1Y4", "BEM26-P7L8", "BEM26-X3R9", "BEM26-A8P4", "BEM26-M5K2", "BEM26-Q1W7", "BEM26-S5F9", "BEM26-H2C3", "BEM26-F6S8", "BEM26-G4K1", "BEM26-L2H5", "BEM26-N6M1", "BEM26-W1Q4", "BEM26-R7X3", "BEM26-D5J9", "BEM26-C2G1", "BEM26-V3N4", "BEM26-K9M7", "BEM26-B6L2", "BEM26-T3V5", "BEM26-Z7Y8", "BEM26-P1L3", "BEM26-X6R4", "BEM26-A2P1", "BEM26-M7K5", "BEM26-Q4W8", "BEM26-S1F2", "BEM26-H5C7", "BEM26-F4S3", "BEM26-G9K6", "BEM26-L4H2", "BEM26-N8M5", "BEM26-W3Q1"];
         const adminCodes = ["ADMIN-CHOUIDIRA-01", "ADMIN-CHOUIDIRA-02", "ADMIN-CHOUIDIRA-03", "ADMIN-CHOUIDIRA-04", "ADMIN-CHOUIDIRA-05"];
 
-        function validateActivation() {
-            const inputCode = document.getElementById('activation-code').value.trim().toUpperCase();
-            const error = document.getElementById('activation-error');
+        function getFingerprint() {
+            return btoa(navigator.userAgent + screen.width + screen.height).substring(0, 16);
+        }
 
-            if (masterCodes.includes(inputCode) || adminCodes.includes(inputCode)) {
-                localStorage.setItem('BEM_2026_ACTIVE', 'true');
-                document.getElementById('activation-screen').style.display = 'none';
+        function handleActivation() {
+            const input = document.getElementById('activation-input').value.trim().toUpperCase();
+            const fingerprint = getFingerprint();
+            const error = document.getElementById('error-msg');
+
+            if (masterCodes.includes(input) || adminCodes.includes(input)) {
+                // محاكاة قفل الكود على السيرفر المحلي (localStorage)
+                const lockedID = localStorage.getItem("LOCKED_" + input);
+                
+                if (lockedID && lockedID !== fingerprint) {
+                    error.innerText = "Error: Code already used on another device.";
+                    error.style.display = "block";
+                    return;
+                }
+
+                localStorage.setItem("APP_IS_ACTIVE", "true");
+                localStorage.setItem("ACTIVE_CODE", input);
+                localStorage.setItem("LOCKED_" + input, fingerprint);
+                document.getElementById('activation-overlay').style.display = 'none';
             } else {
-                error.style.display = 'block';
+                error.innerText = "Error: Invalid Activation Code.";
+                error.style.display = "block";
             }
         }
 
-        function checkAuth() {
-            if (localStorage.getItem('BEM_2026_ACTIVE') === 'true') {
-                document.getElementById('activation-screen').style.display = 'none';
+        function logoutApp() {
+            if(confirm("Logout? You will need to re-activate the app.")) {
+                localStorage.removeItem("APP_IS_ACTIVE");
+                location.reload();
             }
         }
 
-        function logout() {
-            localStorage.removeItem('BEM_2026_ACTIVE');
-            location.reload();
-        }
+        window.onload = () => {
+            if (localStorage.getItem("APP_IS_ACTIVE") === "true") {
+                document.getElementById('activation-overlay').style.display = 'none';
+            }
+        };
 
-        // استدعاء الفحص عند التحميل
-        checkAuth();
+        // --- بنك الأسئلة الأصلي ---
+        const rawQuestionBank = [
+            // --- UNIT 1: LANDMARKS ---
+            { u: "Unit1", q: "The 'Eiffel Tower' is in ______.", o: ["London", "Paris", "Berlin"], a: "Paris" },
+            { u: "Unit1", q: "The Taj Mahal is located in ______.", o: ["India", "Pakistan", "China"], a: "India" },
+            { u: "Unit1", q: "An ______ designs and builds buildings.", o: ["Architect", "Pilot", "Mechanic"], a: "Architect" },
+            { u: "Unit1", q: "Algeria is the ______ country in Africa.", o: ["Largest", "Smallest", "Oldest"], a: "Largest" },
+            { u: "Unit1", q: "Timgad is a ______ city in Batna.", o: ["Roman", "British", "Modern"], a: "Roman" },
+            { u: "Unit1", q: "The Great Wall is a landmark in ______.", o: ["Japan", "China", "Korea"], a: "China" },
+            { u: "Unit1", q: "Martyrs' Memorial is in ______.", o: ["Algiers", "Oran", "Constantine"], a: "Algiers" },
+            { u: "Unit1", q: "A ______ shows tourists around.", o: ["Guide", "Teacher", "Doctor"], a: "Guide" },
+            { u: "Unit1", q: "Big Ben is a ______ in London.", o: ["Clock tower", "Bridge", "Castle"], a: "Clock tower" },
+            { u: "Unit1", q: "The 'Leaning Tower' is in ______.", o: ["Italy", "France", "Spain"], a: "Italy" },
+            { u: "Unit1", q: "The Alhambra Palace is in ______.", o: ["Granada", "Madrid", "Seville"], a: "Granada" },
+            { u: "Unit1", q: "Which word means 'very old'?", o: ["Ancient", "Modern", "New"], a: "Ancient" },
+            { u: "Unit1", q: "A ______ is a plan of a journey.", o: ["Itinerary", "Map", "Ticket"], a: "Itinerary" },
+            { u: "Unit1", q: "Statue of Liberty is in ______ City.", o: ["New York", "London", "Cairo"], a: "New York" },
+            { u: "Unit1", q: "Synonym of 'Famous' is ______.", o: ["Well-known", "Unknown", "Small"], a: "Well-known" },
 
-        // --- بنك الأسئلة ---
-        const rawQuestionBank =  [
-    // --- UNIT 1: LANDMARKS AND OUTSTANDING FIGURES (65 Questions) ---
-    { u: "Unit1", q: "The 'Eiffel Tower' is located in ______.", o: ["London", "Paris", "Berlin"], a: "Paris" },
-    { u: "Unit1", q: "Algeria is the ______ country in Africa.", o: ["Largest", "Smallest", "Oldest"], a: "Largest" },
-    { u: "Unit1", q: "The Taj Mahal ______ built by Shah Jahan.", o: ["was", "were", "is"], a: "was" },
-    { u: "Unit1", q: "William Shakespeare is a famous British ______.", o: ["writer", "scientist", "pilot"], a: "writer" },
-    { u: "Unit1", q: "Makam El Chahid is in ______.", o: ["Algiers", "Oran", "Setif"], a: "Algiers" },
-    { u: "Unit1", q: "Leonardo Da Vinci ______ the Mona Lisa.", o: ["painted", "was painted", "paints"], a: "painted" },
-    { u: "Unit1", q: "The 'Casbah' is a ______ site in Algiers.", o: ["historic", "modern", "new"], a: "historic" },
-    { u: "Unit1", q: "Timgad is a Roman city located in ______.", o: ["Batna", "Tipaza", "Tlemcen"], a: "Batna" },
-    { u: "Unit1", q: "An ______ is someone who designs buildings.", o: ["architect", "artist", "author"], a: "architect" },
-    { u: "Unit1", q: "Kateb Yacine wrote the famous novel ______.", o: ["Nedjma", "The Son of the Poor", "Hamlet"], a: "Nedjma" },
-    { u: "Unit1", q: "The Statue of Liberty is a ______ from France to the USA.", o: ["gift", "tower", "bridge"], a: "gift" },
-    { u: "Unit1", q: "The 'Leaning Tower' is found in ______.", o: ["Italy", "Spain", "Greece"], a: "Italy" },
-    { u: "Unit1", q: "Big Ben is a famous ______ in London.", o: ["clock tower", "museum", "bridge"], a: "clock tower" },
-    { u: "Unit1", q: "The 'Great Wall' is in ______.", o: ["China", "Japan", "India"], a: "China" },
-    { u: "Unit1", q: "Mouloud Feraoun was an Algerian ______.", o: ["author", "painter", "sculptor"], a: "author" },
-    { u: "Unit1", q: "The Alhambra Palace is in ______.", o: ["Spain", "Morocco", "Portugal"], a: "Spain" },
-    { u: "Unit1", q: "Which is a comparative of equality?", o: ["as tall as", "taller than", "the tallest"], a: "as tall as" },
-    { u: "Unit1", q: "Oran is ______ Algiers (equality).", o: ["as beautiful as", "more beautiful", "beautifuler"], a: "as beautiful as" },
-    { u: "Unit1", q: "The Pyramids ______ located in Egypt.", o: ["are", "is", "was"], a: "are" },
-    { u: "Unit1", q: "A 'mausoleum' is a ______.", o: ["tomb", "garden", "school"], a: "tomb" },
-    { u: "Unit1", q: "Who designed the Eiffel Tower?", o: ["Gustave Eiffel", "Picasso", "Newton"], a: "Gustave Eiffel" },
-    { u: "Unit1", q: "The letter 'L' in 'Walk' is ______.", o: ["silent", "pronounced", "strong"], a: "silent" },
-    { u: "Unit1", q: "The letter 'K' in 'Knife' is ______.", o: ["silent", "pronounced", "weak"], a: "silent" },
-    { u: "Unit1", q: "The letter 'W' in 'Write' is ______.", o: ["silent", "pronounced", "long"], a: "silent" },
-    { u: "Unit1", q: "The opposite of 'Ancient' is ______.", o: ["Modern", "Old", "Big"], a: "Modern" },
-    { u: "Unit1", q: "The opposite of 'Famous' is ______.", o: ["Unknown", "Known", "Popular"], a: "Unknown" },
-    { u: "Unit1", q: "Mount Everest is the ______ mountain.", o: ["highest", "higher", "high"], a: "highest" },
-    { u: "Unit1", q: "Sidi M'Cid Bridge is in ______.", o: ["Constantine", "Skikda", "Annaba"], a: "Constantine" },
-    { u: "Unit1", q: "The 'Passive Voice' of 'He wrote the book' is ______.", o: ["The book was written", "The book is written", "The book wrote"], a: "The book was written" },
-    { u: "Unit1", q: "Picasso was born ______ October 25th.", o: ["on", "in", "at"], a: "on" },
-    { u: "Unit1", q: "Algiers is ______ than Oran (Large).", o: ["larger", "largest", "as large as"], a: "larger" },
-    { u: "Unit1", q: "A 'poet' writes ______.", o: ["poems", "novels", "news"], a: "poems" },
-    { u: "Unit1", q: "The Sahara is a ______ desert.", o: ["vast", "small", "cold"], a: "vast" },
-    { u: "Unit1", q: "Tower Bridge ______ the River Thames.", o: ["crosses", "under", "beside"], a: "crosses" },
-    { u: "Unit1", q: "Many tourists ______ Algeria every year.", o: ["visit", "visiting", "visits"], a: "visit" },
-    { u: "Unit1", q: "The Royal Mauretanean Mausoleum is in ______.", o: ["Tipaza", "Algiers", "Blida"], a: "Tipaza" },
-    { u: "Unit1", q: "Which letter is silent in 'Island'?", o: ["s", "i", "l"], a: "s" },
-    { u: "Unit1", q: "The opposite of 'Top' is ______.", o: ["Bottom", "Side", "Up"], a: "Bottom" },
-    { u: "Unit1", q: "El Emir Abdelkader was a great ______.", o: ["leader", "pilot", "doctor"], a: "leader" },
-    { u: "Unit1", q: "The 'Mona Lisa' is kept in the ______ Museum.", o: ["Louvre", "British", "Bardo"], a: "Louvre" },
-    { u: "Unit1", q: "Constantine is known as the City of ______.", o: ["Bridges", "Roses", "Airplanes"], a: "Bridges" },
-    { u: "Unit1", q: "The 'Martyrs' Memorial' was inaugurated in ______.", o: ["1982", "1962", "1990"], a: "1982" },
-    { u: "Unit1", q: "An 'outstanding' person is ______.", o: ["excellent", "bad", "lazy"], a: "excellent" },
-    { u: "Unit1", q: "The opposite of 'North' is ______.", o: ["South", "East", "West"], a: "South" },
-    { u: "Unit1", q: "The word 'Sightseeing' means ______.", o: ["visiting places", "cooking", "sleeping"], a: "visiting places" },
-    { u: "Unit1", q: "Shakespeare was ______ in Stratford.", o: ["born", "dead", "living"], a: "born" },
-    { u: "Unit1", q: "Is Timgad ______ as Djemila?", o: ["as famous", "more famous", "famouser"], a: "as famous" },
-    { u: "Unit1", q: "The Great Pyramid is ______ landmark.", o: ["a", "an", "the"], a: "a" },
-    { u: "Unit1", q: "London is on the river ______.", o: ["Thames", "Nile", "Seine"], a: "Thames" },
-    { u: "Unit1", q: "The opposite of 'East' is ______.", o: ["West", "South", "North"], a: "West" },
-    { u: "Unit1", q: "A 'biography' is a story of ______.", o: ["a life", "a plant", "a car"], a: "a life" },
-    { u: "Unit1", q: "The 'Bardo' is a museum in ______.", o: ["Algiers", "Tunis", "both"], a: "both" },
-    { u: "Unit1", q: "Who wrote 'The Son of the Poor'?", o: ["Mouloud Feraoun", "Kateb Yacine", "Assia Djebar"], a: "Mouloud Feraoun" },
-    { u: "Unit1", q: "Which letter is silent in 'Castle'?", o: ["t", "c", "s"], a: "t" },
-    { u: "Unit1", q: "The Nile is the ______ river in the world.", o: ["longest", "longer", "long"], a: "longest" },
-    { u: "Unit1", q: "A 'trip' is another word for ______.", o: ["journey", "house", "food"], a: "journey" },
-    { u: "Unit1", q: "The adjective of 'History' is ______.", o: ["Historical", "Historian", "Historyer"], a: "Historical" },
-    { u: "Unit1", q: "Algiers is the ______ of Algeria.", o: ["capital", "village", "landmark"], a: "capital" },
-    { u: "Unit1", q: "The opposite of 'cheap' is ______.", o: ["expensive", "new", "easy"], a: "expensive" },
-    { u: "Unit1", q: "The 'British Museum' is in ______.", o: ["London", "New York", "Paris"], a: "London" },
-    { u: "Unit1", q: "Ben Badis was a ______ reformer.", o: ["religious", "scientific", "musical"], a: "religious" },
-    { u: "Unit1", q: "The adjective of 'Beauty' is ______.", o: ["Beautiful", "Beautify", "Beautier"], a: "Beautiful" },
-    { u: "Unit1", q: "Oxford is famous ______ its university.", o: ["for", "at", "in"], a: "for" },
-    { u: "Unit1", q: "The opposite of 'Natural' is ______.", o: ["Man-made", "Green", "Small"], a: "Man-made" },
-    { u: "Unit1", q: "Italy is in ______.", o: ["Europe", "Africa", "Asia"], a: "Europe" },
+            // --- UNIT 2: GRAMMAR ---
+            { u: "Unit2", q: "The Mona Lisa ______ by Da Vinci.", o: ["was painted", "painted", "is painting"], a: "was painted" },
+            { u: "Unit2", q: "English is ______ difficult ______ Maths.", o: ["as / as", "more / than", "the / most"], a: "as / as" },
+            { u: "Unit2", q: "The Pyramids ______ built by Pharaohs.", o: ["were", "was", "are"], a: "were" },
+            { u: "Unit2", q: "The room ______ cleaned yesterday.", o: ["was", "is", "were"], a: "was" },
+            { u: "Unit2", q: "Algeria is not as ______ as Russia.", o: ["big", "bigger", "biggest"], a: "big" },
+            { u: "Unit2", q: "The phone ______ by Bell.", o: ["was invented", "invented", "invents"], a: "was invented" },
+            { u: "Unit2", q: "Active: 'He cleans the car'. Passive: The car ______.", o: ["is cleaned", "was cleaned", "cleans"], a: "is cleaned" },
+            { u: "Unit2", q: "The books ______ sent last week.", o: ["were", "was", "are"], a: "were" },
+            { u: "Unit2", q: "Gold is ______ expensive than silver.", o: ["more", "most", "as"], a: "more" },
+            { u: "Unit2", q: "Is Timgad as ______ as Tipaza?", o: ["old", "older", "oldest"], a: "old" },
+            { u: "Unit2", q: "The bridge ______ in 1950.", o: ["was built", "built", "is built"], a: "was built" },
+            { u: "Unit2", q: "Active: 'She wrote a book'. Passive: A book ______.", o: ["was written", "is written", "wrote"], a: "was written" },
+            { u: "Unit2", q: "Diamonds are the ______ expensive gems.", o: ["most", "more", "as"], a: "most" },
+            { u: "Unit2", q: "The thief ______ caught last night.", o: ["was", "were", "is"], a: "was" },
+            { u: "Unit2", q: "The mosque ______ visited by many.", o: ["is", "was", "are"], a: "is" },
 
-    // --- UNIT 2: ME, MY PERSONALITY AND MY EXPERIENCES (70 Questions) ---
-    { u: "Unit2", q: "I have ______ been to Spain.", o: ["never", "ever", "yet"], a: "never" },
-    { u: "Unit2", q: "She ______ lived here since 2015.", o: ["has", "have", "is"], a: "has" },
-    { u: "Unit2", q: "Have you ______ seen a ghost?", o: ["ever", "never", "just"], a: "ever" },
-    { u: "Unit2", q: "The opposite of 'Honest' is ______.", o: ["Dishonest", "Unhonest", "Inhonest"], a: "Dishonest" },
-    { u: "Unit2", q: "He is ______; he doesn't talk much.", o: ["shy", "talkative", "bossy"], a: "shy" },
-    { u: "Unit2", q: "I ______ my keys yesterday.", o: ["lost", "have lost", "lose"], a: "lost" },
-    { u: "Unit2", q: "The opposite of 'Patient' is ______.", o: ["Impatient", "Unpatient", "Dispatient"], a: "Impatient" },
-    { u: "Unit2", q: "A person who helps others is ______.", o: ["helpful", "selfish", "greedy"], a: "helpful" },
-    { u: "Unit2", q: "My primary school ______ are great.", o: ["memories", "memory", "memorize"], a: "memories" },
-    { u: "Unit2", q: "I have known him ______ 10 years.", o: ["for", "since", "ago"], a: "for" },
-    { u: "Unit2", q: "The opposite of 'Polite' is ______.", o: ["Impolite", "Unpolite", "Dispolite"], a: "Impolite" },
-    { u: "Unit2", q: "I have ______ finished my exam.", o: ["just", "yet", "ever"], a: "just" },
-    { u: "Unit2", q: "She hasn't called me ______.", o: ["yet", "already", "since"], a: "yet" },
-    { u: "Unit2", q: "A ______ person likes to work hard.", o: ["hard-working", "lazy", "shy"], a: "hard-working" },
-    { u: "Unit2", q: "The opposite of 'Kind' is ______.", o: ["Cruel", "Nice", "Good"], a: "Cruel" },
-    { u: "Unit2", q: "I was born ______ 2011.", o: ["in", "on", "at"], a: "in" },
-    { u: "Unit2", q: "They have ______ traveled by plane.", o: ["already", "yet", "never"], a: "already" },
-    { u: "Unit2", q: "The opposite of 'Responsible' is ______.", o: ["Irresponsible", "Unresponsible", "Inresponsible"], a: "Irresponsible" },
-    { u: "Unit2", q: "A person who tells the truth is ______.", o: ["honest", "liar", "rude"], a: "honest" },
-    { u: "Unit2", q: "How ______ have you lived here?", o: ["long", "much", "many"], a: "long" },
-    { u: "Unit2", q: "The opposite of 'Lucky' is ______.", o: ["Unlucky", "Inlucky", "Dislucky"], a: "Unlucky" },
-    { u: "Unit2", q: "I am ______ in sports.", o: ["interested", "interest", "interesting"], a: "interested" },
-    { u: "Unit2", q: "She ______ graduated last year.", o: ["graduated", "has graduated", "graduating"], a: "graduated" },
-    { u: "Unit2", q: "The opposite of 'Mature' is ______.", o: ["Immature", "Unmature", "Inmature"], a: "Immature" },
-    { u: "Unit2", q: "A 'dream' is something you ______.", o: ["hope for", "hate", "fear"], a: "hope for" },
-    { u: "Unit2", q: "I have ______ seen that movie.", o: ["already", "yet", "never"], a: "already" },
-    { u: "Unit2", q: "What is your ______ job?", o: ["dream", "sleep", "night"], a: "dream" },
-    { u: "Unit2", q: "The opposite of 'Organized' is ______.", o: ["Disorganized", "Unorganized", "Inorganized"], a: "Disorganized" },
-    { u: "Unit2", q: "He is very ______; he likes to give orders.", o: ["bossy", "shy", "kind"], a: "bossy" },
-    { u: "Unit2", q: "I have ______ been to a farm.", o: ["never", "ever", "since"], a: "never" },
-    { u: "Unit2", q: "The opposite of 'Happy' is ______.", o: ["Unhappy", "Inhappy", "Dishappy"], a: "Unhappy" },
-    { u: "Unit2", q: "Childhood is the period when you are a ______.", o: ["child", "adult", "old"], a: "child" },
-    { u: "Unit2", q: "I ______ a lot of friends in primary school.", o: ["had", "have had", "having"], a: "had" },
-    { u: "Unit2", q: "The opposite of 'Legal' is ______.", o: ["Illegal", "Unlegal", "Dislegal"], a: "Illegal" },
-    { u: "Unit2", q: "An 'ideal' friend is someone you ______.", o: ["trust", "hate", "ignore"], a: "trust" },
-    { u: "Unit2", q: "I have lived in this city ______ I was born.", o: ["since", "for", "ago"], a: "since" },
-    { u: "Unit2", q: "The opposite of 'Correct' is ______.", o: ["Incorrect", "Uncorrect", "Discorrect"], a: "Incorrect" },
-    { u: "Unit2", q: "A ______ person always smiles.", o: ["cheerful", "sad", "angry"], a: "cheerful" },
-    { u: "Unit2", q: "Have you ______ tried sushi?", o: ["ever", "never", "yet"], a: "ever" },
-    { u: "Unit2", q: "The opposite of 'Formal' is ______.", o: ["Informal", "Unformal", "Disformal"], a: "Informal" },
-    { u: "Unit2", q: "I ______ English for 4 years now.", o: ["have studied", "studied", "study"], a: "have studied" },
-    { u: "Unit2", q: "My ______ is to become a doctor.", o: ["ambition", "past", "yesterday"], a: "ambition" },
-    { u: "Unit2", q: "The opposite of 'Fair' is ______.", o: ["Unfair", "Infair", "Disfair"], a: "Unfair" },
-    { u: "Unit2", q: "She is ______; she thinks only about herself.", o: ["selfish", "generous", "kind"], a: "selfish" },
-    { u: "Unit2", q: "I ______ to the beach last Friday.", o: ["went", "have gone", "go"], a: "went" },
-    { u: "Unit2", q: "The opposite of 'Regular' is ______.", o: ["Irregular", "Unregular", "Inregular"], a: "Irregular" },
-    { u: "Unit2", q: "A ______ person likes to share things.", o: ["generous", "selfish", "lazy"], a: "generous" },
-    { u: "Unit2", q: "He ______ his homework two hours ago.", o: ["finished", "has finished", "finishes"], a: "finished" },
-    { u: "Unit2", q: "The opposite of 'Active' is ______.", o: ["Lazy", "Busy", "Strong"], a: "Lazy" },
-    { u: "Unit2", q: "Are you ______ of spiders?", o: ["afraid", "happy", "brave"], a: "afraid" },
-    { u: "Unit2", q: "I haven't seen her ______ last week.", o: ["since", "for", "ago"], a: "since" },
-    { u: "Unit2", q: "The opposite of 'Safe' is ______.", o: ["Dangerous", "Good", "Easy"], a: "Dangerous" },
-    { u: "Unit2", q: "She is ______; she never tells lies.", o: ["truthful", "liar", "rude"], a: "truthful" },
-    { u: "Unit2", q: "How many times ______ you visited Oran?", o: ["have", "did", "do"], a: "have" },
-    { u: "Unit2", q: "The opposite of 'Common' is ______.", o: ["Uncommon", "Incommon", "Discommon"], a: "Uncommon" },
-    { u: "Unit2", q: "A 'career' is a ______.", o: ["profession", "hobby", "game"], a: "profession" },
-    { u: "Unit2", q: "I have ______ seen a blue whale.", o: ["never", "ever", "just"], a: "never" },
-    { u: "Unit2", q: "The opposite of 'Logical' is ______.", o: ["Illogical", "Unlogical", "Dislogical"], a: "Illogical" },
-    { u: "Unit2", q: "He is ______; he wants to be the best.", o: ["ambitious", "lazy", "shy"], a: "ambitious" },
-    { u: "Unit2", q: "I ______ my first car in 2020.", o: ["bought", "have bought", "buy"], a: "bought" },
-    { u: "Unit2", q: "The opposite of 'Proper' is ______.", o: ["Improper", "Unproper", "Disproper"], a: "Improper" },
-    { u: "Unit2", q: "Are you ______ with your results?", o: ["satisfied", "satisfying", "satisfy"], a: "satisfied" },
-    { u: "Unit2", q: "I ______ to that school when I was six.", o: ["went", "have gone", "go"], a: "went" },
-    { u: "Unit2", q: "The opposite of 'Pleasant' is ______.", o: ["Unpleasant", "Inpleasant", "Displeasant"], a: "Unpleasant" },
-    { u: "Unit2", q: "She is ______; she always says 'Please'.", o: ["polite", "rude", "angry"], a: "polite" },
-    { u: "Unit2", q: "I have ______ been so happy.", o: ["never", "ever", "yet"], a: "never" },
-    { u: "Unit2", q: "The opposite of 'Capable' is ______.", o: ["Incapable", "Uncapable", "Discapable"], a: "Incapable" },
-    { u: "Unit2", q: "What ______ you do last night?", o: ["did", "have", "do"], a: "did" },
-    { u: "Unit2", q: "A 'memory' can be ______.", o: ["happy or sad", "only good", "only bad"], a: "happy or sad" },
-    { u: "Unit2", q: "The opposite of 'Tidy' is ______.", o: ["Untidy", "Intidy", "Distidy"], a: "Untidy" },
-
-    // --- UNIT 3: ME, MY COMMUNITY AND CITIZENSHIP (65 Questions) ---
-    { u: "Unit3", q: "A ______ is a person who works for free.", o: ["volunteer", "worker", "boss"], a: "volunteer" },
-    { u: "Unit3", q: "We ______ protect our environment.", o: ["must", "mustn't", "can't"], a: "must" },
-    { u: "Unit3", q: "You ______ throw trash in the river.", o: ["shouldn't", "should", "must"], a: "shouldn't" },
-    { u: "Unit3", q: "To ______ means to use again.", o: ["recycle", "waste", "burn"], a: "recycle" },
-    { u: "Unit3", q: "A good citizen ______ the elderly.", o: ["respects", "ignores", "hates"], a: "respects" },
-    { u: "Unit3", q: "We should ______ money for charity.", o: ["donate", "waste", "lose"], a: "donate" },
-    { u: "Unit3", q: "UNICEF helps ______ around the world.", o: ["children", "cars", "trees"], a: "children" },
-    { u: "Unit3", q: "You ______ be kind to animals.", o: ["ought to", "shouldn't", "mustn't"], a: "ought to" },
-    { u: "Unit3", q: "Littering is ______ the law.", o: ["against", "with", "for"], a: "against" },
-    { u: "Unit3", q: "A 'non-profit' group doesn't work for ______.", o: ["money", "fun", "people"], a: "money" },
-    { u: "Unit3", q: "We must ______ water.", o: ["save", "waste", "pollute"], a: "save" },
-    { u: "Unit3", q: "The opposite of 'Poor' is ______.", o: ["Rich", "Small", "Kind"], a: "Rich" },
-    { u: "Unit3", q: "A ______ helps the disabled people.", o: ["charity", "bank", "shop"], a: "charity" },
-    { u: "Unit3", q: "You ______ smoke in hospitals.", o: ["mustn't", "must", "should"], a: "mustn't" },
-    { u: "Unit3", q: "Planting trees ______ pollution.", o: ["reduces", "increases", "starts"], a: "reduces" },
-    { u: "Unit3", q: "The opposite of 'Safe' is ______.", o: ["Unsafe", "Insafe", "Dissafe"], a: "Unsafe" },
-    { u: "Unit3", q: "Solidarity means ______ together.", o: ["standing", "fighting", "sleeping"], a: "standing" },
-    { u: "Unit3", q: "We should help the ______ people.", o: ["needy", "rich", "happy"], a: "needy" },
-    { u: "Unit3", q: "The Red Crescent ______ people in need.", o: ["helps", "ignores", "hurts"], a: "helps" },
-    { u: "Unit3", q: "You ______ obey your parents.", o: ["should", "shouldn't", "mustn't"], a: "should" },
-    { u: "Unit3", q: "The opposite of 'Clean' is ______.", o: ["Dirty", "New", "Big"], a: "Dirty" },
-    { u: "Unit3", q: "Poverty is when people have no ______.", o: ["money", "friends", "names"], a: "money" },
-    { u: "Unit3", q: "We must ______ our natural resources.", o: ["preserve", "destroy", "waste"], a: "preserve" },
-    { u: "Unit3", q: "You ______ drive without a license.", o: ["can't", "must", "should"], a: "can't" },
-    { u: "Unit3", q: "A good citizen doesn't ______ walls.", o: ["tag", "clean", "build"], a: "tag" },
-    { u: "Unit3", q: "The opposite of 'Helpful' is ______.", o: ["Unhelpful", "Inhelpful", "Dishelpful"], a: "Unhelpful" },
-    { u: "Unit3", q: "We should ______ the streets clean.", o: ["keep", "make", "trash"], a: "keep" },
-    { u: "Unit3", q: "Disabled people ______ our support.", o: ["need", "hate", "refuse"], a: "need" },
-    { u: "Unit3", q: "The opposite of 'Kindness' is ______.", o: ["Cruelty", "Love", "Care"], a: "Cruelty" },
-    { u: "Unit3", q: "You ______ listen to your teacher.", o: ["must", "mustn't", "can't"], a: "must" },
-    { u: "Unit3", q: "Air pollution is ______ for our health.", o: ["bad", "good", "nice"], a: "bad" },
-    { u: "Unit3", q: "The opposite of 'Believe' is ______.", o: ["Disbelieve", "Unbelieve", "Inbelieve"], a: "Disbelieve" },
-    { u: "Unit3", q: "A 'community' is a ______ of people.", o: ["group", "car", "book"], a: "group" },
-    { u: "Unit3", q: "We must ______ electricity.", o: ["save", "waste", "burn"], a: "save" },
-    { u: "Unit3", q: "You ______ be late for school.", o: ["shouldn't", "should", "must"], a: "shouldn't" },
-    { u: "Unit3", q: "The opposite of 'Healthy' is ______.", o: ["Unhealthy", "Inhealthy", "Dishealthy"], a: "Unhealthy" },
-    { u: "Unit3", q: "An 'orphan' has no ______.", o: ["parents", "books", "shoes"], a: "parents" },
-    { u: "Unit3", q: "We should ______ books to the library.", o: ["donate", "steal", "burn"], a: "donate" },
-    { u: "Unit3", q: "The opposite of 'Polite' is ______.", o: ["Rude", "Nice", "Kind"], a: "Rude" },
-    { u: "Unit3", q: "You ______ cross the road at the zebra crossing.", o: ["should", "shouldn't", "mustn't"], a: "should" },
-    { u: "Unit3", q: "Smoke from factories ______ the air.", o: ["pollutes", "cleans", "saves"], a: "pollutes" },
-    { u: "Unit3", q: "The opposite of 'Legal' is ______.", o: ["Illegal", "Unlegal", "Inlegal"], a: "Illegal" },
-    { u: "Unit3", q: "A 'campaign' is a series of ______.", o: ["actions", "sleeps", "dreams"], a: "actions" },
-    { u: "Unit3", q: "We must ______ our forests.", o: ["protect", "burn", "cut"], a: "protect" },
-    { u: "Unit3", q: "You ______ shout in the library.", o: ["mustn't", "must", "should"], a: "mustn't" },
-    { u: "Unit3", q: "The opposite of 'Pure' is ______.", o: ["Impure", "Unpure", "Dispure"], a: "Impure" },
-    { u: "Unit3", q: "Solidarity is a ______ value.", o: ["human", "robotic", "bad"], a: "human" },
-    { u: "Unit3", q: "We should ______ the homeless.", o: ["feed", "ignore", "hurt"], a: "feed" },
-    { u: "Unit3", q: "The opposite of 'Fair' is ______.", o: ["Unfair", "Infair", "Disfair"], a: "Unfair" },
-    { u: "Unit3", q: "You ______ keep your environment green.", o: ["should", "shouldn't", "mustn't"], a: "should" },
-    { u: "Unit3", q: "Cutting trees ______ the earth.", o: ["harms", "helps", "cleans"], a: "harms" },
-    { u: "Unit3", q: "The opposite of 'Possible' is ______.", o: ["Impossible", "Unpossible", "Dispossible"], a: "Impossible" },
-    { u: "Unit3", q: "A good citizen is ______.", o: ["responsible", "lazy", "rude"], a: "responsible" },
-    { u: "Unit3", q: "We should ______ used paper.", o: ["recycle", "waste", "throw"], a: "recycle" },
-    { u: "Unit3", q: "The opposite of 'Equal' is ______.", o: ["Unequal", "Inequal", "Disequal"], a: "Unequal" },
-    { u: "Unit3", q: "You ______ help your neighbors.", o: ["should", "mustn't", "can't"], a: "should" },
-    { u: "Unit3", q: "Pollution ______ many animals.", o: ["kills", "saves", "feeds"], a: "kills" },
-    { u: "Unit3", q: "The opposite of 'Trust' is ______.", o: ["Distrust", "Untrust", "Intrust"], a: "Distrust" },
-    { u: "Unit3", q: "Charity starts at ______.", o: ["home", "school", "street"], a: "home" },
-    { u: "Unit3", q: "We should ______ old clothes to the poor.", o: ["give", "sell", "burn"], a: "give" },
-    { u: "Unit3", q: "The opposite of 'Happy' is ______.", o: ["Sad", "Glad", "Cheerful"], a: "Sad" },
-    { u: "Unit3", q: "You ______ waste your time.", o: ["shouldn't", "should", "must"], a: "shouldn't" },
-    { u: "Unit3", q: "Cleaning the beach is a ______ act.", o: ["noble", "bad", "lazy"], a: "noble" },
-    { u: "Unit3", q: "The opposite of 'Obey' is ______.", o: ["Disobey", "Unobey", "Inobey"], a: "Disobey" },
-    { u: "Unit3", q: "A 'citizen' lives in a ______.", o: ["country", "forest", "moon"], a: "country" }
-];
+            // --- UNIT 3: CITIZENSHIP ---
+            { u: "Unit3", t: "Volunteers work for no money.", tr: "المتطوعون يعملون بلا مقابل.", q: "A volunteer helps for ______.", o: ["Free", "Salary", "Cash"], a: "Free" },
+            { u: "Unit3", t: "I remember my first day at school.", tr: "أتذكر يومي الأول في المدرسة.", q: "Opposite of 'Remember' is ______.", o: ["Forget", "Know", "Recall"], a: "Forget" },
+            { u: "Unit3", q: "A good citizen ______ the law.", o: ["Respects", "Breaks", "Ignores"], a: "Respects" },
+            { u: "Unit3", q: "Red Crescent is a ______ organization.", o: ["Charity", "Sports", "Music"], a: "Charity" },
+            { u: "Unit3", q: "My childhood was full of ______.", o: ["Memories", "Work", "Jobs"], a: "Memories" },
+            { u: "Unit3", q: "A ______ helps keep the city clean.", o: ["Cleaner", "Doctor", "Teacher"], a: "Cleaner" },
+            { u: "Unit3", q: "Solidarity means ______ others.", o: ["Helping", "Fighting", "Hating"], a: "Helping" },
+            { u: "Unit3", q: "I want to be a ______ to help the sick.", o: ["Doctor", "Pilot", "Chef"], a: "Doctor" },
+            { u: "Unit3", q: "Honesty is a good ______.", o: ["Value", "Color", "Sport"], a: "Value" },
+            { u: "Unit3", q: "Childhood is the ______ period of life.", o: ["best", "worst", "hardest"], a: "best" },
+            { u: "Unit3", q: "To succeed, you must work ______.", o: ["Hard", "Slowly", "Never"], a: "Hard" },
+            { u: "Unit3", q: "Opposite of 'Kind' is ______.", o: ["Cruel", "Nice", "Friendly"], a: "Cruel" },
+            { u: "Unit3", q: "Empathy means feeling others' ______.", o: ["Pain", "Wealth", "Cars"], a: "Pain" },
+            { u: "Unit3", q: "UNICEF helps ______ worldwide.", o: ["Children", "Animals", "Planes"], a: "Children" },
+            { u: "Unit3", q: "Primary school is my first ______.", o: ["Memory", "Salary", "Office"], a: "Memory" }
+        ];
 
         let currentQs = []; let currIdx = 0; let corrects = 0; let wrongs = 0; let active = true;
 
@@ -443,21 +280,18 @@
             if(q.t) { html += `<div class="paragraph-card"><p style="margin:0; font-size:0.9rem;">${q.t}</p><span class="translation">${q.tr}</span></div>`; }
             html += `<div class="question-text">${q.q}</div>`;
             const shuffledOptions = [...q.o].sort(() => 0.5 - Math.random());
-            html += shuffledOptions.map(opt => `<button class="option-btn" onclick="check(this,'${opt.replace(/'/g, "\\'")}','${q.a.replace(/'/g, "\\'")}')">${opt}</button>`).join('');
+            html += shuffledOptions.map(opt => `<button class="option-btn" onclick="check(this,'${opt.replace(/'/g, "\\'")}','${q.a.replace(/'/g, "\\ Ernie")}')">${opt}</button>`).join('');
             document.getElementById('quiz-box').innerHTML = html;
         }
 
         function check(btn, sel, cor) {
             if(!active) return; active = false;
-            if(sel === cor) { btn.classList.add('correct'); corrects++; } 
-            else { 
-                btn.classList.add('wrong'); wrongs++;
-                document.querySelectorAll('.option-btn').forEach(b => { if(b.innerText === cor) b.classList.add('correct'); });
+            const correctText = currentQs[currIdx].a;
+            if(sel === correctText) { btn.classList.add('correct'); corrects++; } 
+            else { btn.classList.add('wrong'); wrongs++;
+                document.querySelectorAll('.option-btn').forEach(b => { if(b.innerText === correctText) b.classList.add('correct'); });
             }
-            setTimeout(() => {
-                if(currIdx < currentQs.length - 1) { currIdx++; render(); }
-                else { finish(); }
-            }, 1200);
+            setTimeout(() => { if(currIdx < currentQs.length - 1) { currIdx++; render(); } else { finish(); } }, 1200);
         }
 
         function finish() {
