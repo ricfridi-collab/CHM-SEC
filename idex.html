@@ -38,20 +38,14 @@
         .activation-card input {
             width: 100%; padding: 15px; margin: 20px 0; border-radius: 12px;
             border: 1px solid var(--gold-solid); background: rgba(0,0,0,0.4);
-            color: white; text-align: center; font-size: 1.2rem; box-sizing: border-box; outline: none;
+            color: white; text-align: center; font-size: 1.2rem; outline: none;
         }
 
         .ticker { background: var(--vert-bouteille); color: var(--gold-solid); padding: 8px 0; font-size: 0.7rem; border-bottom: 1px solid var(--gold-solid); text-align: center; overflow: hidden; }
         .ticker-text { display: inline-block; white-space: nowrap; animation: move 25s linear infinite; font-weight: 600; }
 
         .app-container { display: flex; flex: 1; overflow: hidden; position: relative; }
-
-        .side-bar { 
-            width: 70px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); 
-            display: flex; flex-direction: column; align-items: center; 
-            padding-top: 25px; border-right: 1px solid var(--glass-border); z-index: 10;
-        }
-
+        .side-bar { width: 70px; background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(15px); display: flex; flex-direction: column; align-items: center; padding-top: 25px; border-right: 1px solid var(--glass-border); z-index: 10; }
         .nav-item { width: 45px; height: 45px; margin-bottom: 25px; cursor: pointer; filter: grayscale(1) opacity(0.5); transition: 0.4s; }
         .nav-item svg { width: 100%; height: 100%; fill: var(--gold-solid); }
         .nav-item.active { filter: grayscale(0) opacity(1); transform: scale(1.15); filter: drop-shadow(0 0 8px var(--gold-solid)); }
@@ -60,32 +54,17 @@
         h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; background: var(--gold-linear); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0 0 15px 0; }
 
         .card { background: rgba(27, 77, 62, 0.4); border: 1px solid var(--glass-border); border-radius: 15px; padding: 15px; margin-bottom: 12px; display: flex; align-items: center; cursor: pointer; transition: 0.3s; }
-        .card:active { transform: scale(0.97); background: rgba(27, 77, 62, 0.6); }
         .card-icon { width: 32px; height: 32px; margin-right: 15px; fill: var(--gold-solid); }
         .card-info h3 { margin: 0; font-size: 0.95rem; color: var(--gold-solid); }
-        .card-info span { font-size: 0.75rem; opacity: 0.7; }
 
-        .quiz-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--primary-bg); z-index: 2000; display: none;
-            flex-direction: column; padding: 20px; box-sizing: border-box; justify-content: center;
-        }
+        .option-btn { width: 100%; padding: 15px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border); color: white; border-radius: 12px; margin-top: 10px; font-size: 0.95rem; cursor: pointer; }
+        .option-btn.correct { background: var(--correct) !important; }
+        .option-btn.wrong { background: var(--wrong) !important; }
 
-        .score-bar { 
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px;
-            margin-bottom: 20px; border: 1px solid var(--glass-border); font-size: 0.85rem;
-        }
-
-        .option-btn { 
-            width: 100%; padding: 15px; background: rgba(255,255,255,0.03); border: 1px solid var(--glass-border);
-            color: white; border-radius: 12px; margin-top: 10px; font-size: 0.95rem; transition: 0.2s; text-align: left;
-        }
-        .option-btn.correct { background: var(--correct) !important; border-color: var(--correct); font-weight: bold; }
-        .option-btn.wrong { background: var(--wrong) !important; border-color: var(--wrong); }
+        .quiz-overlay { position: fixed; inset: 0; background: var(--primary-bg); z-index: 2000; display: none; flex-direction: column; padding: 20px; box-sizing: border-box; }
 
         .footer-bar { background: var(--vert-bouteille); border-top: 1px solid var(--gold-solid); padding: 12px 0; text-align: center; }
-        .signature { font-family: 'Playfair Display', serif; font-size: 0.75rem; color: var(--gold-solid); letter-spacing: 4px; font-weight: 800; text-transform: uppercase; }
+        .signature { font-family: 'Playfair Display', serif; font-size: 0.75rem; color: var(--gold-solid); letter-spacing: 4px; font-weight: 800; }
 
         @keyframes move { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
     </style>
@@ -94,176 +73,128 @@
 
     <div id="activation-overlay">
         <div class="activation-card">
-            <h2 style="font-family:'Playfair Display'; color:var(--gold-solid);">BEM ELITE 2026</h2>
-            <p style="font-size:0.8rem; opacity:0.7;">Enter your single-use code</p>
-            <input type="text" id="activation-input" placeholder="BEM26-XXXX">
-            <button class="option-btn" style="background:var(--gold-linear); color:black; font-weight:bold; text-align:center;" onclick="handleActivation()">ACTIVATE NOW</button>
+            <h2 style="font-family:'Playfair Display'; color:var(--gold-solid); margin:0;">BEM ELITE 2026</h2>
+            <p style="font-size:0.8rem; opacity:0.7; margin-top:5px;">Online Activation Required</p>
+            <input type="text" id="activation-input" placeholder="ENTER ACTIVATION CODE">
+            <button id="activate-btn" class="option-btn" style="background:var(--gold-linear); color:black; font-weight:bold;" onclick="handleActivation()">ACTIVATE APP</button>
             <p id="error-msg" style="color:var(--wrong); font-size:0.75rem; margin-top:10px; display:none;"></p>
         </div>
     </div>
 
     <div class="ticker">
-        <div class="ticker-text">🎯 BEM 2026 OFFICIAL TRAINING HUB • DR. MOHAMED CHOUIDIRA • SMART REVISION 🎯</div>
+        <div class="ticker-text">🎯 BEM 2026 OFFICIAL HUB • DR. MOHAMED CHOUIDIRA • SMART REVISION 🎯</div>
     </div>
 
     <div class="app-container">
         <nav class="side-bar">
             <div class="nav-item active" onclick="showHome()"><svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg></div>
-            <div class="nav-item" onclick="startQuiz('Unit1')"><svg viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg></div>
-            <div class="nav-item" onclick="startQuiz('Unit2')"><svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/></svg></div>
-            <div class="nav-item" onclick="startQuiz('Unit3')"><svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z"/></svg></div>
-            <div class="nav-item" style="margin-top:auto; padding-bottom:20px;" onclick="logoutApp()">
-                <svg viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
-            </div>
         </nav>
 
         <main class="main-content" id="home-view">
             <h1>Elite Revision</h1>
-            <p style="opacity: 0.7; font-size: 0.85rem; margin-bottom: 20px;">Master English for BEM 2026 with Dr. Chouidira.</p>
-            <div class="card" onclick="startQuiz('Unit1')">
+            <div class="card" onclick="startQuiz('Unit 1')">
                 <svg class="card-icon" viewBox="0 0 24 24"><path d="M12 2L4.5 20.29l.71.71L12 18l6.79 3 .71-.71z"/></svg>
-                <div class="card-info"><h3>Universal Landmarks</h3><span>Itinerary & Traveling Vocabulary</span></div>
+                <div class="card-info"><h3>Unit 1: Landmarks & Figures</h3></div>
             </div>
-            <div class="card" onclick="startQuiz('Unit2')">
+            <div class="card" onclick="startQuiz('Unit 2')">
                 <svg class="card-icon" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/></svg>
-                <div class="card-info"><h3>Grammar Mastery</h3><span>Passive Voice & Equality</span></div>
-            </div>
-            <div class="card" onclick="startQuiz('Unit3')">
-                <svg class="card-icon" viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6z"/></svg>
-                <div class="card-info"><h3>Writing & Memories</h3><span>Charity, Figures & Dream Job</span></div>
+                <div class="card-info"><h3>Unit 2: Grammar Mastery</h3></div>
             </div>
         </main>
     </div>
 
     <div class="quiz-overlay" id="quiz-overlay">
-        <div class="score-bar">
-            <span style="color: var(--correct); font-weight: 800;">✓ <span id="c-count">0</span></span>
-            <span id="t-count" style="color: var(--gold-solid); font-weight: 800;">TASK 1/10</span>
-            <span style="color: var(--wrong); font-weight: 800;">✗ <span id="w-count">0</span></span>
-        </div>
         <div id="quiz-box"></div>
-        <button onclick="showHome()" style="margin-top: 25px; background: none; border: 1px solid #ff4444; color: #ff4444; padding: 12px; border-radius: 10px; width: 100%; font-weight: bold; font-size: 0.8rem;">END SESSION</button>
+        <button onclick="showHome()" style="margin-top: 20px; background: none; border: 1px solid var(--gold-solid); color: var(--gold-solid); padding: 10px; border-radius: 8px; width: 100%; cursor: pointer;">BACK TO MENU</button>
     </div>
 
     <footer class="footer-bar"><div class="signature">DR. MOHAMED CHOUIDIRA</div></footer>
 
     <script>
-        // الأكواد الأصلية المضافة (200 كود + 5 أدمن)
-        const masterCodes = ["BEM26-X7R2", "BEM26-A9P4", "BEM26-M5K8", "BEM26-Q1W9", "BEM26-T3V6", "BEM26-N8B2", "BEM26-L4H7", "BEM26-D2J5", "BEM26-S6F3", "BEM26-G9C1", "BEM26-Z1Y8", "BEM26-K4M2", "BEM26-R7X5", "BEM26-V3N9", "BEM26-P6L4", "BEM26-H2D8", "BEM26-W9Q1", "BEM26-F5S7", "BEM26-C3G9", "BEM26-J8K2", "BEM26-Y4B6", "BEM26-M1T9", "BEM26-R8X3", "BEM26-L5N7", "BEM26-P2V4", "BEM26-Q9W1", "BEM26-S7F5", "BEM26-K3M8", "BEM26-D6J2", "BEM26-G1C4", "BEM26-H8B9", "BEM26-Z4Y2", "BEM26-T7V5", "BEM26-N1M3", "BEM26-X6R8", "BEM26-A2P9", "BEM26-F4S1", "BEM26-W3Q7", "BEM26-L8H2", "BEM26-D9J5", "BEM26-M2K6", "BEM26-R5X1", "BEM26-C7G4", "BEM26-V8N2", "BEM26-S1F9", "BEM26-B3K7", "BEM26-T9V4", "BEM26-Z2Y6", "BEM26-P5L1", "BEM26-Q8W3", "BEM26-X1R5", "BEM26-A4P7", "BEM26-M9K2", "BEM26-J3D6", "BEM26-H6C8", "BEM26-F1S4", "BEM26-G2K9", "BEM26-L7H3", "BEM26-N5M8", "BEM26-W4Q2", "BEM26-R1X9", "BEM26-D4J7", "BEM26-S8F2", "BEM26-C5G1", "BEM26-K9M4", "BEM26-B2L6", "BEM26-T5V8", "BEM26-Z9Y3", "BEM26-P1L7", "BEM26-V4N5", "BEM26-X8R3", "BEM26-A1P6", "BEM26-M4K9", "BEM26-Q7W2", "BEM26-S3F8", "BEM26-H9C5", "BEM26-F2S1", "BEM26-W6Q4", "BEM26-L3H9", "BEM26-D1J2", "BEM26-R4X8", "BEM26-C9G2", "BEM26-V1N7", "BEM26-N7M4", "BEM26-K2M5", "BEM26-B8L9", "BEM26-T1V3", "BEM26-Z6Y7", "BEM26-P9L2", "BEM26-X4R1", "BEM26-A7P5", "BEM26-M2K1", "BEM26-Q3W6", "BEM26-S9F4", "BEM26-H1C2", "BEM26-F8S3", "BEM26-G5K7", "BEM26-L2H1", "BEM26-N9M6", "BEM26-W7Q8", "BEM26-R3X2", "BEM26-D8J9", "BEM26-C1G5", "BEM26-V6N3", "BEM26-K7M1", "BEM26-B4L8", "BEM26-T2V9", "BEM26-Z5Y1", "BEM26-P8L4", "BEM26-X9R6", "BEM26-A3P2", "BEM26-M6K4", "BEM26-Q5W7", "BEM26-S2F1", "BEM26-H4C9", "BEM26-F9S5", "BEM26-G3K2", "BEM26-L1H8", "BEM26-N4M7", "BEM26-W2Q9", "BEM26-R9X4", "BEM26-D3J6", "BEM26-C8G7", "BEM26-V5N1", "BEM26-K1M9", "BEM26-B7L2", "BEM26-T8V4", "BEM26-Z3Y5", "BEM26-P4L9", "BEM26-X2R7", "BEM26-A5P1", "BEM26-M8K3", "BEM26-Q2W4", "BEM26-S4F6", "BEM26-H7C1", "BEM26-F3S9", "BEM26-G8K5", "BEM26-L6H2", "BEM26-N2M9", "BEM26-W5Q3", "BEM26-R6X7", "BEM26-D1J4", "BEM26-C4G8", "BEM26-V9N6", "BEM26-K5M2", "BEM26-B1L3", "BEM26-T4V7", "BEM26-Z8Y9", "BEM26-P3L5", "BEM26-X5R2", "BEM26-A9P8", "BEM26-M1K7", "BEM26-Q6W2", "BEM26-S8F3", "BEM26-H3C5", "BEM26-F7S1", "BEM26-G1K4", "BEM26-L9H6", "BEM26-N3M2", "BEM26-W8Q5", "BEM26-R2X1", "BEM26-D7J3", "BEM26-C9G6", "BEM26-V4N8", "BEM26-K8M5", "BEM26-B5L1", "BEM26-T9V2", "BEM26-Z1Y4", "BEM26-P7L8", "BEM26-X3R9", "BEM26-A8P4", "BEM26-M5K2", "BEM26-Q1W7", "BEM26-S5F9", "BEM26-H2C3", "BEM26-F6S8", "BEM26-G4K1", "BEM26-L2H5", "BEM26-N6M1", "BEM26-W1Q4", "BEM26-R7X3", "BEM26-D5J9", "BEM26-C2G1", "BEM26-V3N4", "BEM26-K9M7", "BEM26-B6L2", "BEM26-T3V5", "BEM26-Z7Y8", "BEM26-P1L3", "BEM26-X6R4", "BEM26-A2P1", "BEM26-M7K5", "BEM26-Q4W8", "BEM26-S1F2", "BEM26-H5C7", "BEM26-F4S3", "BEM26-G9K6", "BEM26-L4H2", "BEM26-N8M5", "BEM26-W3Q1"];
-        const adminCodes = ["ADMIN-CHOUIDIRA-01", "ADMIN-CHOUIDIRA-02", "ADMIN-CHOUIDIRA-03", "ADMIN-CHOUIDIRA-04", "ADMIN-CHOUIDIRA-05"];
+        // --- إعدادات الربط مع الشيت الخاص بك ---
+        const SHEETDB_API_URL = "https://sheetdb.io/api/v1/at5vemf764m61";
 
-        function getFingerprint() {
-            return btoa(navigator.userAgent + screen.width + screen.height).substring(0, 16);
+        function getDeviceID() {
+            // بصمة تعريفية بسيطة للجهاز
+            return btoa(navigator.userAgent + screen.width).substring(0, 12);
         }
 
-        function handleActivation() {
+        async function handleActivation() {
             const input = document.getElementById('activation-input').value.trim().toUpperCase();
-            const fingerprint = getFingerprint();
             const error = document.getElementById('error-msg');
+            const btn = document.getElementById('activate-btn');
 
-            // 1. التحقق من وجود الكود في القائمة الأصلية
-            if (!masterCodes.includes(input) && !adminCodes.includes(input)) {
-                error.innerText = "Error: Invalid Activation Code.";
+            if (!input) {
+                error.innerText = "Please enter a code.";
                 error.style.display = "block";
                 return;
             }
 
-            // 2. التحقق من سجل الأكواد المستعملة (في المتصفح)
-            const usedCodes = JSON.parse(localStorage.getItem("USED_CODES_DB") || "[]");
-            
-            // إذا كان الكود مستعملاً مسبقاً من شخص آخر (أو نفس الشخص بعد تسجيل الخروج)
-            if (usedCodes.includes(input)) {
-                // استثناء: السماح بدخوله فقط إذا كانت البصمة مطابقة (أي لم يخرج من التطبيق)
-                const currentActive = localStorage.getItem("ACTIVE_CODE");
-                if (currentActive !== input) {
-                    error.innerText = "Error: This code has already been used and is now invalid.";
-                    error.style.display = "block";
-                    return;
+            error.innerText = "Checking code... Please wait.";
+            error.style.display = "block";
+            error.style.color = "var(--gold-solid)";
+            btn.disabled = true;
+
+            try {
+                // 1. البحث عن الكود في ملفك
+                const response = await fetch(`${SHEETDB_API_URL}/search?code=${input}`);
+                const data = await response.json();
+
+                if (data.length > 0) {
+                    const entry = data[0];
+
+                    // 2. التحقق إذا كان الكود مستعملاً مسبقاً
+                    if (entry.status === "USED") {
+                        error.innerText = "Error: This code is already used on another device.";
+                        error.style.color = "var(--wrong)";
+                        btn.disabled = false;
+                        return;
+                    }
+
+                    // 3. تحديث الشيت لشطب الكود وحفظ بصمة الجهاز
+                    const update = await fetch(`${SHEETDB_API_URL}/code/${input}`, {
+                        method: 'PATCH',
+                        headers: {'Content-Type': 'application/json'},
+                        body: JSON.stringify({
+                            "data": { "status": "USED", "device_id": getDeviceID() }
+                        })
+                    });
+
+                    if (update.ok) {
+                        // حفظ حالة التفعيل محلياً ليدخل المستخدم مباشرة مستقبلاً
+                        localStorage.setItem("BEM_26_ACTIVATED", "TRUE");
+                        localStorage.setItem("BEM_USER_CODE", input);
+                        document.getElementById('activation-overlay').style.display = 'none';
+                    } else {
+                        throw new Error("Update failed");
+                    }
+
+                } else {
+                    error.innerText = "Invalid Code. Please verify your code.";
+                    error.style.color = "var(--wrong)";
+                    btn.disabled = false;
                 }
-            }
-
-            // 3. التفعيل و"حرق" الكود
-            usedCodes.push(input);
-            localStorage.setItem("USED_CODES_DB", JSON.stringify(usedCodes));
-            localStorage.setItem("APP_IS_ACTIVE", "true");
-            localStorage.setItem("ACTIVE_CODE", input);
-            localStorage.setItem("DEVICE_LINK", fingerprint); // ربط الجهاز بالكود
-            
-            document.getElementById('activation-overlay').style.display = 'none';
-        }
-
-        function logoutApp() {
-            if(confirm("Warning: Logging out will permanently deactivate this code. You cannot use it again. Continue?")) {
-                localStorage.removeItem("APP_IS_ACTIVE");
-                localStorage.removeItem("ACTIVE_CODE");
-                localStorage.removeItem("DEVICE_LINK");
-                location.reload();
+            } catch (e) {
+                error.innerText = "Connection error. Check your internet.";
+                error.style.color = "var(--wrong)";
+                btn.disabled = false;
             }
         }
 
+        // فحص التفعيل عند فتح التطبيق
         window.onload = () => {
-            const isActive = localStorage.getItem("APP_IS_ACTIVE");
-            const savedCode = localStorage.getItem("ACTIVE_CODE");
-            const savedDevice = localStorage.getItem("DEVICE_LINK");
-            const currentFingerprint = getFingerprint();
-
-            // دخول تلقائي فقط إذا كان مفعلاً والجهاز مطابق
-            if (isActive === "true" && savedCode && savedDevice === currentFingerprint) {
+            if (localStorage.getItem("BEM_26_ACTIVATED") === "TRUE") {
                 document.getElementById('activation-overlay').style.display = 'none';
-            } else {
-                // إذا تغير الجهاز أو تم تسجيل الخروج، يطلب كود جديد
-                localStorage.removeItem("APP_IS_ACTIVE");
             }
         };
 
-        // --- بنك الأسئلة المدمج ---
-        const rawQuestionBank = [
-            { u: "Unit1", q: "The 'Eiffel Tower' is in ______.", o: ["London", "Paris", "Berlin"], a: "Paris" },
-            { u: "Unit1", q: "The Taj Mahal is located in ______.", o: ["India", "Pakistan", "China"], a: "India" },
-            { u: "Unit1", q: "An ______ designs and builds buildings.", o: ["Architect", "Pilot", "Mechanic"], a: "Architect" },
-            { u: "Unit1", q: "Algeria is the ______ country in Africa.", o: ["Largest", "Smallest", "Oldest"], a: "Largest" },
-            { u: "Unit1", q: "Timgad is a ______ city in Batna.", o: ["Roman", "British", "Modern"], a: "Roman" },
-            { u: "Unit2", q: "The Mona Lisa ______ by Da Vinci.", o: ["was painted", "painted", "is painting"], a: "was painted" },
-            { u: "Unit2", q: "English is ______ difficult ______ Maths.", o: ["as / as", "more / than", "the / most"], a: "as / as" },
-            { u: "Unit3", t: "Volunteers work for no money.", tr: "المتطوعون يعملون بلا مقابل.", q: "A volunteer helps for ______.", o: ["Free", "Salary", "Cash"], a: "Free" }
-        ];
-
-        let currentQs = []; let currIdx = 0; let corrects = 0; let wrongs = 0; let active = true;
-
-        function showHome() { document.getElementById('quiz-overlay').style.display = 'none'; }
         function startQuiz(unit) {
-            const filtered = rawQuestionBank.filter(x => x.u === unit);
-            currentQs = filtered.sort(() => 0.5 - Math.random()).slice(0, 10);
-            if(currentQs.length === 0) { alert("More questions coming soon!"); return; }
-            currIdx = 0; corrects = 0; wrongs = 0;
             document.getElementById('quiz-overlay').style.display = 'flex';
-            render();
+            document.getElementById('quiz-box').innerHTML = `<h2 style='color:var(--gold-solid)'>${unit} Exercises</h2><p>Ready to start your elite revision?</p>`;
         }
 
-        function render() {
-            active = true;
-            const q = currentQs[currIdx];
-            document.getElementById('c-count').innerText = corrects;
-            document.getElementById('w-count').innerText = wrongs;
-            document.getElementById('t-count').innerText = `TASK ${currIdx + 1}/10`;
-            let html = q.t ? `<div class="paragraph-card"><p style="margin:0;">${q.t}</p><span style="font-style:italic; opacity:0.6;">${q.tr}</span></div>` : "";
-            html += `<div style="text-align:center; margin:20px 0;">${q.q}</div>`;
-            const shuffledOptions = [...q.o].sort(() => 0.5 - Math.random());
-            html += shuffledOptions.map(opt => `<button class="option-btn" onclick="check(this,'${opt.replace(/'/g, "\\'")}','${q.a.replace(/'/g, "\\'")}')">${opt}</button>`).join('');
-            document.getElementById('quiz-box').innerHTML = html;
-        }
-
-        function check(btn, sel, cor) {
-            if(!active) return; active = false;
-            if(sel === cor) { btn.classList.add('correct'); corrects++; } 
-            else { btn.classList.add('wrong'); wrongs++;
-                document.querySelectorAll('.option-btn').forEach(b => { if(b.innerText === cor) b.classList.add('correct'); });
-            }
-            setTimeout(() => { if(currIdx < currentQs.length - 1) { currIdx++; render(); } else { finish(); } }, 1200);
-        }
-
-        function finish() {
-            document.getElementById('quiz-box').innerHTML = `<div style="text-align:center;"><h2>Finished!</h2><p>Score: ${corrects}/10</p><button class="option-btn" onclick="showHome()">EXIT</button></div>`;
+        function showHome() {
+            document.getElementById('quiz-overlay').style.display = 'none';
         }
     </script>
 </body>
